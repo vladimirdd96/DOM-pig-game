@@ -1,13 +1,4 @@
-/*
-GAME RULES:
-
-- The game has 2 players, playing in rounds
-- In each turn, a player rolls a dice as many times as he whishes. Each result get added to his ROUND score
-- BUT, if the player rolls a 1, all his ROUND score gets lost. After that, it's the next player's turn
-- The player can choose to 'Hold', which means that his ROUND score gets added to his GLOBAL score. After that, it's the next player's turn
-- The first player to reach 100 points on GLOBAL score wins the game
-
-//Coding Challenge 3
+/*//Coding Challenge 3
 
 YOUR 3 CHALLENGES
 Change the game to follow these rules:
@@ -182,7 +173,7 @@ function init() {
 
 
 // Challange: Pig Game
-var scores, roundScore, activePlayer, gamePlaying;
+var scores, roundScore, activePlayer, gamePlaying, lastDice;
 
 init();
 
@@ -196,7 +187,7 @@ document.getElementById('current-1').textContent = '0';
 
 document.querySelector('.btn-roll').addEventListener('click', function () {
   //Check if game is still playing   
-  if (gamePlaying === true) {
+  if (gamePlaying) {
     //1. Random number
     var dice = Math.floor(Math.random() * 6) + 1;
 
@@ -207,30 +198,42 @@ document.querySelector('.btn-roll').addEventListener('click', function () {
 
 
 
-    //3. Update the round score IF the rolled number was not 1{
-    if (dice !== 1) {
+    //3. Update the round score IF the rolled number was not 1
+    if(dice===6 && lastDice===6){
+    //Player lose score
+    scores[activePlayer] = 0;
+    document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+    nextPlayer();
+    }
+    else if (dice !== 1) {
       //add score
       roundScore += dice;
       document.querySelector('#current-' + activePlayer).textContent = roundScore;
     } else {
       //next player
       nextPlayer();
-
     }
-  }
+    lastDice = dice;
+  
+}
 });
 
 document.querySelector('.btn-hold').addEventListener('click', function () {
   //check if game is still playing
-  if (gamePlaying === true) {
+  if (gamePlaying) {
     //1. adding the current score to Global score
     scores[activePlayer] += roundScore;
 
     //2. Update the UI
     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
+    var input = document.querySelector('.final-score').value;
+    //Undefined 0, null, "", are COERCED to false
+    //Anything else is COERCED to true
+    if(input){}
+
     //3. Check if player win the game
-    if (scores[activePlayer] >= 20) {
+    if (scores[activePlayer] >= input) {
       document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
       document.querySelector('.dice').style.display = 'none';
       document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
